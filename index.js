@@ -9,14 +9,13 @@ const openai = new OpenAIApi(configuration);
 
 const setupInputContainer = document.getElementById('setup-input-container');
 const movieBossText = document.getElementById('movie-boss-text');
-const outputTextArea = document.getElementById('output-text');
 
 document.getElementById('send-btn').addEventListener('click', () => {
   const setupTextarea = document.getElementById('setup-textarea');
 
   const textAreaInput = setupTextarea.value;
   if (textAreaInput) {
-    setupInputContainer.textContent = `<img src="images/loading.svg" class="loading" id="loading">`;
+    setupInputContainer.innerHTML = `<img src="images/loading.svg" class="loading" id="loading">`;
     movieBossText.textContent = `Ok, just wait a second while my digital brain digests that...`;
     // fetchBotReply(textAreaInput);
     fetchSynopsis(textAreaInput);
@@ -58,5 +57,19 @@ async function fetchSynopsis(userInput) {
     `,
     max_tokens: 700,
   });
-  outputTextArea.textContent = response.data.choices[0].text;
+  const outputTextArea = document.getElementById('output-text');
+  const synopsis = response.data.choices[0].text;
+  fetchTitle(synopsis);
+  outputTextArea.textContent = synopsis;
+}
+
+async function fetchTitle(synopsis) {
+  const response = await openai.createCompletion({
+    model: 'text-davinci-003',
+    prompt: `Generate a catchy movie title for this synopsis: ${synopsis}`,
+    max_tokens: 25,
+    temperature: 1,
+  });
+  const outputTitleArea = document.getElementById('output-title');
+  outputTitleArea.textContent = response.data.choices[0].text;
 }
