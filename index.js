@@ -95,7 +95,7 @@ async function fetchStars(synopsis) {
 }
 
 async function fetchImagePrompt(title, synopsis) {
-  const respect = await openai.createCompletion({
+  const response = await openai.createCompletion({
     model: 'text-davinci-003',
     prompt: `Give a short description of an image which could be used to advertise a movie based on a title and synopsis. The description should be rich in visual detail but contain no names.
     ###
@@ -128,4 +128,9 @@ async function fetchImageUrl(imagePrompt) {
     'output-img-container'
   ).innerHTML = `<img src="data:image/png;base64,${response.data.data[0].b64_json}">`;
   setupInputContainer.innerHTML = `<button id="view-pitch-btn" class="view-pitch-btn">View Pitch</button>`;
+  document.getElementById('view-pitch-btn').addEventListener('click', () => {
+    document.getElementById('setup-container').style.display = 'none';
+    document.getElementById('output-container').style.display = 'flex';
+    movieBossText.innerText = `This idea is so good I'm jealous! It's gonna make you rich for sure! Remember, I want 10% 💰`;
+  });
 }
