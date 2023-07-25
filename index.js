@@ -15,7 +15,7 @@ const setupTextarea = document.getElementById('setup-textarea');
 document.getElementById('send-btn').addEventListener('click', () => {
   const textAreaInput = setupTextarea.value;
   if (textAreaInput) {
-    setupInputContainer.innerHTML = `<img src="images/loading.svg" class="loading" id="loading">`;
+    setupInputContainer.innerHTML = `<img src="images/loading.gif" class="loading" id="loading">`;
     movieBossText.textContent = `Ok, just wait a second while my digital brain digests that...`;
     fetchBotReply(textAreaInput);
     fetchSynopsis(textAreaInput);
