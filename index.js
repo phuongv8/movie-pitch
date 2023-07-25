@@ -1,23 +1,24 @@
 import { process } from './env';
 import { Configuration, OpenAIApi } from 'openai';
 
+const API_KEY = import.meta.env.VITE_API_KEY;
+
 const configuration = new Configuration({
-  apiKey: process.env.API_KEY,
+  apiKey: API_KEY,
 });
 
 const openai = new OpenAIApi(configuration);
 
 const setupInputContainer = document.getElementById('setup-input-container');
 const movieBossText = document.getElementById('movie-boss-text');
+const setupTextarea = document.getElementById('setup-textarea');
 
 document.getElementById('send-btn').addEventListener('click', () => {
-  const setupTextarea = document.getElementById('setup-textarea');
-
   const textAreaInput = setupTextarea.value;
   if (textAreaInput) {
     setupInputContainer.innerHTML = `<img src="images/loading.svg" class="loading" id="loading">`;
     movieBossText.textContent = `Ok, just wait a second while my digital brain digests that...`;
-    // fetchBotReply(textAreaInput);
+    fetchBotReply(textAreaInput);
     fetchSynopsis(textAreaInput);
   }
 });
@@ -41,7 +42,7 @@ async function fetchBotReply(userInput) {
     `,
     max_tokens: 60,
   });
-  movieBossText.textContent = response.data.choices[0].text;
+  movieBossText.textContent = response.data.choices[0]?.text || '';
 }
 
 async function fetchSynopsis(userInput) {
