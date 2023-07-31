@@ -1,9 +1,9 @@
-// import { process } from './env';
 import { Configuration, OpenAIApi } from 'openai';
-// import { apiCall } from './apiHandler.js';
-
+import { apiCall } from './apiHandler.js';
+import { setTextContent, setInnerHTML } from './domHandler';
+import { process } from './env';
 const configuration = new Configuration({
-  apiKey: import.meta.env.VITE_API_KEY,
+  apiKey: process.env.API_KEY,
 });
 
 const openai = new OpenAIApi(configuration);
@@ -12,13 +12,67 @@ const setupInputContainer = document.getElementById('setup-input-container');
 const movieBossText = document.getElementById('movie-boss-text');
 const setupTextarea = document.getElementById('setup-textarea');
 
-document.getElementById('send-btn').addEventListener('click', () => {
+document.getElementById('send-btn').addEventListener('click', async () => {
   const textAreaInput = setupTextarea.value;
+
   if (textAreaInput) {
-    setupInputContainer.innerHTML = `<img src="images/loading.gif" class="loading" id="loading">`;
-    movieBossText.textContent = `Ok, just wait a second while my digital brain digests that...`;
-    fetchBotReply(textAreaInput);
-    fetchSynopsis(textAreaInput);
+    setInnerHTML(
+      'setup-input-container',
+      `<img src="images/loading.gif" class="loading" id="loading">`
+    );
+    setTextContent(
+      'movie-boss-text',
+      `Ok, just wait a second while my digital brain digests that...`
+    );
+
+    const botReply = await apiCall({
+      model: 'text-davinci-003',
+      prompt: `Generate a short message to enthusiastically say an outline sounds interesting and that you need some minutes to think about it.
+    ###
+    outline: Two dogs fall in love and move to Hawaii to learn to surf.
+    message: I'll need to think about that. But your idea is amazing! I love the bit about Hawaii!
+    ###
+    outline: A plane crashes in the jungle and the passengers have to walk 1000km to safety.
+    message: I'll spend a few moments considering that. But I love your idea!! A disaster movie in the jungle!
+    ###
+    outline: A group of corrupt lawyers try to send an innocent woman to jail.
+    message: Wow that is awesome! Corrupt lawyers, huh? Give me a few moments to think!
+    ###
+    outline: ${textAreaInput}
+    message: 
+    `,
+      max_tokens: 60,
+    });
+    setTextContent('movie-boss-text', botReply);
+
+    const synopsis = await apiCall({
+      model: 'text-davinci-003',
+      prompt: `Generate an engaging, professional and marketable movie synopsis based on an outline. The synopsis should include actors names in brackets after each character. Choose actors that would be ideal for this role. 
+    ###
+    outline: A big-headed daredevil fighter pilot goes back to school only to be sent on a deadly mission.
+    synopsis: The Top Gun Naval Fighter Weapons School is where the best of the best train to refine their elite flying skills. When hotshot fighter pilot Maverick (Tom Cruise) is sent to the school, his reckless attitude and cocky demeanor put him at odds with the other pilots, especially the cool and collected Iceman (Val Kilmer). But Maverick isn't only competing to be the top fighter pilot, he's also fighting for the attention of his beautiful flight instructor, Charlotte Blackwood (Kelly McGillis). Maverick gradually earns the respect of his instructors and peers - and also the love of Charlotte, but struggles to balance his personal and professional life. As the pilots prepare for a mission against a foreign enemy, Maverick must confront his own demons and overcome the tragedies rooted deep in his past to become the best fighter pilot and return from the mission triumphant.  
+    ###
+    outline: ${textAreaInput}
+    synopsis:
+    `,
+      max_tokens: 700,
+    });
+    setTextContent('output-text', synopsis);
+
+    const title = await fetchTitle(synopsis);
+    setTextContent('output-title', title);
+
+    const stars = await fetchStars(synopsis);
+    setTextContent('output-stars', stars);
+
+    const imagePrompt = await fetchImagePrompt(title, synopsis);
+    const imageUrl = await fetchImageUrl(imagePrompt);
+    setInnerHTML(
+      'output-img-container',
+      `<img src="${imageUrl}" alt="${title}">`
+    );
+    // fetchBotReply(textAreaInput);
+    // fetchSynopsis(textAreaInput);
   }
 });
 
@@ -65,20 +119,17 @@ async function fetchSynopsis(userInput) {
 }
 
 async function fetchTitle(synopsis) {
-  const response = await openai.createCompletion({
+  const response = await apiCall({
     model: 'text-davinci-003',
     prompt: `Generate a catchy movie title for this synopsis: ${synopsis}`,
     max_tokens: 25,
     temperature: 1,
   });
-  const outputTitleArea = document.getElementById('output-title');
-  const title = response.data.choices[0].text;
-  outputTitleArea.textContent = title;
-  fetchImagePrompt(title, synopsis);
+  return response;
 }
 
 async function fetchStars(synopsis) {
-  const response = await openai.createCompletion({
+  const response = await apiCall({
     model: 'text-davinci-003',
     prompt: `Extract the names in brackets from the synopsis.
     ###
@@ -90,12 +141,11 @@ async function fetchStars(synopsis) {
     `,
     max_tokens: 30,
   });
-  const outputStarsArea = document.getElementById('output-stars');
-  outputStarsArea.textContent = response.data.choices[0].text;
+  return response;
 }
 
 async function fetchImagePrompt(title, synopsis) {
-  const response = await openai.createCompletion({
+  const response = await apiCall({
     model: 'text-davinci-003',
     prompt: `Give a short description of an image which could be used to advertise a movie based on a title and synopsis. The description should be rich in visual detail but contain no names.
     ###
@@ -113,8 +163,7 @@ async function fetchImagePrompt(title, synopsis) {
     `,
     max_tokens: 100,
   });
-  const imagePrompt = response.data.choices[0].text;
-  fetchImageUrl(imagePrompt);
+  return response;
 }
 
 async function fetchImageUrl(imagePrompt) {
@@ -124,13 +173,25 @@ async function fetchImageUrl(imagePrompt) {
     size: '256x256',
     response_format: 'b64_json',
   });
-  document.getElementById(
-    'output-img-container'
-  ).innerHTML = `<img src="data:image/png;base64,${response.data.data[0].b64_json}">`;
-  setupInputContainer.innerHTML = `<button id="view-pitch-btn" class="view-pitch-btn">View Pitch</button>`;
+  setInnerHTML(
+    'output-img-container',
+    `<img src="data:image/png;base64,${response.data.data[0].b64_json}">`
+  );
+  setInnerHTML(
+    'setup-input-container',
+    `<button id="view-pitch-btn" class="view-pitch-btn">View Pitch</button>`
+  );
+
   document.getElementById('view-pitch-btn').addEventListener('click', () => {
     document.getElementById('setup-container').style.display = 'none';
     document.getElementById('output-container').style.display = 'flex';
-    movieBossText.innerText = `This idea is so good I'm jealous! It's gonna make you rich for sure! Remember, I want 10% 💰`;
+    setTextContent(
+      'movie-boss-text',
+      `This idea is so good I'm jealous! It's gonna make you rich for sure! Remember, I want 10% 💰`
+    );
   });
+
+  return `data:image/png;base64,${response.data.data[0].b64_json}`;
 }
+
+// Need to display view pitch and other things. Look back at old code.
