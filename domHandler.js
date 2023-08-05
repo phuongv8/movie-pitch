@@ -11,3 +11,11 @@ export const setInnerHTML = (elementId, html) => {
     element.innerHTML = html;
   }
 };
+
+export const setDisplay = (elementId, displayValue) => {
+  const element = document.getElementById(elementId);
+  if (element) {
+    element.style.display = displayValue;
+  }
+};
+

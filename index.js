@@ -1,6 +1,6 @@
 import { Configuration, OpenAIApi } from 'openai';
 import { apiCall } from './apiHandler.js';
-import { setTextContent, setInnerHTML } from './domHandler';
+import { setTextContent, setInnerHTML, setDisplay } from './domHandler';
 import { process } from './env';
 const configuration = new Configuration({
   apiKey: process.env.API_KEY,
@@ -183,8 +183,9 @@ async function fetchImageUrl(imagePrompt) {
   );
 
   document.getElementById('view-pitch-btn').addEventListener('click', () => {
-    document.getElementById('setup-container').style.display = 'none';
-    document.getElementById('output-container').style.display = 'flex';
+    setDisplay('setup-container', 'none');
+    setDisplay('output-container', 'flex');
+
     setTextContent(
       'movie-boss-text',
       `This idea is so good I'm jealous! It's gonna make you rich for sure! Remember, I want 10% 💰`
