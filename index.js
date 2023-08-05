@@ -1,14 +1,10 @@
-import { Configuration, OpenAIApi } from 'openai';
+import { OpenAIApi } from 'openai';
 import { apiCall } from './apiHandler.js';
 import { setTextContent, setInnerHTML, setDisplay } from './domHandler';
-import { process } from './env';
-const configuration = new Configuration({
-  apiKey: process.env.API_KEY,
-});
+
 
 const openai = new OpenAIApi(configuration);
 
-const movieBossText = document.getElementById('movie-boss-text');
 const setupTextarea = document.getElementById('setup-textarea');
 
 document.getElementById('send-btn').addEventListener('click', async () => {
