@@ -4,7 +4,7 @@ const configuration = new Configuration({
   apiKey: import.meta.env.VITE_API_KEY,
 });
 
-const openai = new OpenAIApi(configuration);
+export const openai = new OpenAIApi(configuration);
 
 export const apiCall = async ({ model, prompt, max_tokens, temperature }) => {
   try {
