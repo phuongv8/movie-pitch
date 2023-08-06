@@ -15,7 +15,7 @@ document.getElementById('send-btn').addEventListener('click', async () => {
     );
     setTextContent(
       'movie-boss-text',
-      `Ok, just wait a second while my digital brain digests that...`
+      `Okie-dokie, give me a sec while my digital noggin munchin' on that idea... Nom nom nom! `
     );
 
     const botReply = await apiCall({
