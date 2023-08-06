@@ -84,7 +84,6 @@ section {
   padding: 0.25em 1em;
   box-shadow: 0px 1px 18px 3px var(--dark);
   max-width: 420px;
-  height: 50%;
 }
 
 /* =================
@@ -236,6 +235,7 @@ button:hover {
 img.loading {
   /* max-width: 40px; */
   filter: none;
+  margin: 0 auto;
 }
 
 /* =================
