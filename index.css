@@ -23,7 +23,7 @@ body {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  /* justify-content: space-between; */
 }
 
 /* =================
@@ -71,7 +71,10 @@ header span {
 }
 
 main {
-  padding: 0 1em;
+  display: flex;
+  align-items: center;
+  align-content: center;
+  height: 100vh;
 }
 
 section {
