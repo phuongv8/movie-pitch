@@ -1,11 +1,11 @@
 import { apiCall } from './apiHandler.js';
-import { setTextContent, setInnerHTML, setDisplay } from './domHandler';
+import { setTextContent, setInnerHTML } from './domHandler';
 import { fetchTitle, fetchStars, fetchImagePrompt, fetchImageUrl } from './fetchHandler';
 
 
 const setupTextarea = document.getElementById('setup-textarea');
 
-document.getElementById('send-btn').addEventListener('click', async () => {
+async function sendPitch() {
   const textAreaInput = setupTextarea.value;
 
   if (textAreaInput) {
@@ -65,5 +65,14 @@ document.getElementById('send-btn').addEventListener('click', async () => {
       `<img src="${imageUrl}" alt="${title}">`
     );
   }
-});
+}
 
+document.getElementById('send-btn').addEventListener('click', sendPitch);
+
+
+setupTextarea.addEventListener('keydown', function(event) {
+  if (event.key === 'Enter' && !event.shiftKey && !event.altKey && !event.ctrlKey) {
+      event.preventDefault(); 
+      sendPitch(); 
+  }
+});
