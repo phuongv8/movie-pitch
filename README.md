@@ -2,7 +2,6 @@
 Welcome to Pitch Paw, the app where a simple idea transforms into a full-blown movie pitch with titles, actors, and even a poster!
 
 # Demo
-<img width="1302" alt="pitch paw demo" src="https://github.com/phuongv8/movie-pitch/assets/100975883/551d3f51-34ea-42fc-b8c4-611503c3c603">  
 
 https://github.com/phuongv8/movie-pitch/assets/100975883/dedbe838-e0cc-4a1d-b97d-ae66966cf8f0  
 
