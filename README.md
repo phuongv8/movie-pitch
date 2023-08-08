@@ -14,7 +14,7 @@ https://github.com/phuongv8/movie-pitch/assets/100975883/dedbe838-e0cc-4a1d-b97d
 # Tech Stack
 - Frontend built using Vanilla JS
 - Integrated with OpenAI API for generating content.
-- Deployed using [Your Hosting Platform]
+- Deployed using Vercel
 
 # Getting Started 
 Prerequisites: Node.js, OpenAI API key
@@ -22,7 +22,7 @@ Prerequisites: Node.js, OpenAI API key
 ## Installation
 1. Clone the repository to your local machine
    ```sh
-   git clone https://github.com/phuongv8/movie-pitch/edit/main/README.md
+   git clone https://github.com/phuongv8/movie-pitch.git
    ```
 
 2. Change into the project directory
